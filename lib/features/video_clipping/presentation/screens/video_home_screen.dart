@@ -48,7 +48,7 @@ class VideoHomeScreen extends StatelessWidget {
               const _Brand(),
               const Expanded(child: Center(child: _AspectDiagram())),
               const Text(
-                'Any landscape in.\nClean 16:9 clip out.',
+                'Any landscape in.\nClean 9:16 clip out.',
                 style: AppTypography.headline,
               ),
               const SizedBox(height: AppSpacing.lg),
@@ -121,7 +121,7 @@ class _AspectDiagram extends StatelessWidget {
           Positioned(
             top: 24,
             child: Container(
-              width: 231,
+              width: 73,
               height: 130,
               decoration: BoxDecoration(
                 color: AppColors.primary.withValues(alpha: 0.16),
@@ -133,7 +133,7 @@ class _AspectDiagram extends StatelessWidget {
           Positioned(
             bottom: 0,
             child: Text(
-              '16:9',
+              '9:16',
               style: AppTypography.mono11.copyWith(
                 color: AppColors.accentText,
                 fontWeight: FontWeight.w600,
@@ -151,7 +151,7 @@ class _StepsGrid extends StatelessWidget {
 
   static const _steps = [
     ('01', 'Trim up to 60s'),
-    ('02', 'Reframe to 16:9'),
+    ('02', 'Reframe to 9:16'),
     ('03', 'Add a caption'),
     ('04', 'Export & share'),
   ];

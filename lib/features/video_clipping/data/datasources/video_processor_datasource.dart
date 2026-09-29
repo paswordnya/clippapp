@@ -198,7 +198,7 @@ class VideoProcessorDataSourceImpl implements VideoProcessorDataSource {
 
   Future<String> _buildDrawtext(String caption, CaptionStyle style) async {
     final fontPath = await _fontPath(style.font);
-    final fontSize = (AppConstants.outputWidth * 0.064 * _sizeMultipliers[style.size]!)
+    final fontSize = (AppConstants.outputWidth * AppConstants.captionFontRatio * _sizeMultipliers[style.size]!)
         .round();
     final color = _colors[style.color]!;
     final darkText = style.color == CaptionColor.black;

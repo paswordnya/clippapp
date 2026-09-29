@@ -1,7 +1,7 @@
 # Clipp App
 
 A landscape-video clipper: pick a video, trim it to at most 60 seconds, add a
-one-line caption, and export a clean 16:9 clip with the caption burned in.
+one-line caption, and export a 9:16 vertical clip with the caption burned in.
 
 ## Download & Install
 
@@ -48,7 +48,7 @@ flutter run -d <your-iphone-or-simulator>
 2. Select start and end time
 3. Maximum clip duration: 60 seconds
 4. Add a one-line caption
-5. Reframe to 16:9 (crop, not stretch)
+5. Reframe to 9:16 vertical (crop, not stretch)
 6. Burn the caption into the video
 7. Preview the result
 8. Save or share
@@ -146,6 +146,6 @@ The demo shows:
 2. Set start/end
 3. Add caption
 4. Process video
-5. Show 16:9 output
+5. Show 9:16 vertical output
 6. Show burned-in caption
 7. Save/share result

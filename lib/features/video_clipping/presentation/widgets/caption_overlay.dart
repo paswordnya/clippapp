@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:semarewards/app/theme/app_colors.dart';
+import 'package:semarewards/core/constants/app_constants.dart';
 import 'package:semarewards/features/video_clipping/domain/entities/caption_style.dart';
 
 class CaptionOverlay extends StatelessWidget {
@@ -51,7 +52,7 @@ class CaptionOverlay extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final width = constraints.maxWidth;
-        final fontSize = width * 0.064 * _sizeMultipliers[style.size]!;
+        final fontSize = width * AppConstants.captionFontRatio * _sizeMultipliers[style.size]!;
         final yFraction = _positionFractions[style.position]!;
 
         final textStyle = TextStyle(
