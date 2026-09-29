@@ -5,7 +5,7 @@ one-line caption, and export a clean 16:9 clip with the caption burned in.
 
 ## Download & Install
 
-_APK link pending — will be added here once available._
+**[Download the APK (Google Drive)](https://drive.google.com/file/d/1p-eiN8eGxyx_ZRxyMVODug3kQSt3nnlJ/view?usp=sharing)**
 
 Download the APK, install it on an Android device, and start testing the app.
 
