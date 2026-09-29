@@ -24,6 +24,23 @@ install matching `environment.sdk: ^3.13.4` in `pubspec.yaml` should work.
 is 24 (Android 7.0+), handled automatically by Gradle. A physical device or
 emulator with a photo library is needed to pick and save videos.
 
+**iOS (also compatible)**: the app runs on iOS 15.0+ as well. Note that iOS
+builds can't be shared as a downloadable file like the APK. To try it, the
+device (or simulator) must be connected to your Mac and the app installed
+through Xcode/Flutter:
+
+```bash
+flutter pub get
+cd ios && pod install && cd ..   # required once, installs CocoaPods
+flutter run -d <your-iphone-or-simulator>
+```
+
+- A physical iPhone needs to be plugged in and trusted, with a signing team
+  set in Xcode (open `ios/Runner.xcworkspace` → Runner → Signing & Capabilities).
+- Always open the `.xcworkspace`, not the `.xcodeproj`.
+- If Xcode reports "The sandbox is not in sync with the Podfile.lock", run
+  `pod install` in `ios/`.
+
 ## App Flow
 
 1. Pick a landscape video
