@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:semarewards/app/theme/app_colors.dart';
 import 'package:semarewards/core/constants/app_constants.dart';
 
-class TrimRangeStrip extends StatelessWidget {
+enum _Drag { start, end, range }
+
+class TrimRangeStrip extends StatefulWidget {
   const TrimRangeStrip({
     super.key,
     required this.videoDuration,
@@ -10,6 +12,9 @@ class TrimRangeStrip extends StatelessWidget {
     required this.end,
     required this.playhead,
     required this.onChanged,
+    this.onScrubStart,
+    this.onScrub,
+    this.onScrubEnd,
   });
 
   final Duration videoDuration;
@@ -18,8 +23,38 @@ class TrimRangeStrip extends StatelessWidget {
   final Duration playhead;
   final ValueChanged<(Duration start, Duration end)> onChanged;
 
+  /// Called when a drag begins, so the host can pause playback.
+  final VoidCallback? onScrubStart;
+
+  /// Called while dragging with the timestamp the user is looking at
+  /// (the edge being moved), so the host can seek the preview to it.
+  final ValueChanged<Duration>? onScrub;
+
+  /// Called when the drag finishes.
+  final VoidCallback? onScrubEnd;
+
   static const double _height = 56;
   static const double _handleWidth = 18;
+  static const double _hitWidth = 32;
+
+  @override
+  State<TrimRangeStrip> createState() => _TrimRangeStripState();
+}
+
+class _TrimRangeStripState extends State<TrimRangeStrip> {
+  static const _height = TrimRangeStrip._height;
+  static const _handleWidth = TrimRangeStrip._handleWidth;
+  static const _hitWidth = TrimRangeStrip._hitWidth;
+
+  Duration get videoDuration => widget.videoDuration;
+  Duration get start => widget.start;
+  Duration get end => widget.end;
+  Duration get playhead => widget.playhead;
+
+  _Drag? _active;
+  late Duration _originStart;
+  late Duration _originEnd;
+  double _accumulated = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -33,34 +68,52 @@ class TrimRangeStrip extends StatelessWidget {
 
         double timeToX(Duration d) => _handleWidth + d.inMilliseconds / totalMs * trackWidth;
 
-        Duration msToDuration(double dxPixels) =>
-            Duration(milliseconds: (dxPixels / trackWidth * totalMs).round());
+        void beginDrag(_Drag kind) {
+          _active = kind;
+          _originStart = start;
+          _originEnd = end;
+          _accumulated = 0;
+          widget.onScrubStart?.call();
+        }
 
-        void applyDelta(String kind, double dxPixels) {
-          final dt = msToDuration(dxPixels);
-          var s = start;
-          var e = end;
+        // Always computed from the drag origin + total finger travel, so
+        // clamping at an edge never causes drift or lost pixels.
+        void updateDrag(_Drag kind, double dxPixels) {
+          if (_active != kind || trackWidth <= 0) return;
+          _accumulated += dxPixels;
+          final dt = Duration(
+            microseconds: (_accumulated / trackWidth * totalMs * 1000).round(),
+          );
+          var s = _originStart;
+          var e = _originEnd;
+          Duration scrubTo;
           switch (kind) {
-            case 'start':
-              s = _clampDuration(s + dt, Duration.zero, e - const Duration(milliseconds: 1));
+            case _Drag.start:
+              s = _clampDuration(s + dt, Duration.zero, e - AppConstants.minClipDuration);
               if (e - s > AppConstants.maxClipDuration) {
                 s = e - AppConstants.maxClipDuration;
               }
-            case 'end':
-              e = _clampDuration(
-                e + dt,
-                s + const Duration(milliseconds: 1),
-                videoDuration,
-              );
+              scrubTo = s;
+            case _Drag.end:
+              e = _clampDuration(e + dt, s + AppConstants.minClipDuration, videoDuration);
               if (e - s > AppConstants.maxClipDuration) {
                 e = s + AppConstants.maxClipDuration;
               }
-            default:
+              scrubTo = e;
+            case _Drag.range:
               final len = e - s;
               s = _clampDuration(s + dt, Duration.zero, videoDuration - len);
               e = s + len;
+              scrubTo = s;
           }
-          onChanged((s, e));
+          if (s != start || e != end) widget.onChanged((s, e));
+          widget.onScrub?.call(scrubTo);
+        }
+
+        void endDrag() {
+          if (_active == null) return;
+          _active = null;
+          widget.onScrubEnd?.call();
         }
 
         final selLeftX = timeToX(start);
@@ -116,7 +169,10 @@ class TrimRangeStrip extends StatelessWidget {
                 bottom: -3,
                 child: GestureDetector(
                   behavior: HitTestBehavior.opaque,
-                  onHorizontalDragUpdate: (d) => applyDelta('range', d.delta.dx),
+                  onHorizontalDragStart: (_) => beginDrag(_Drag.range),
+                  onHorizontalDragUpdate: (d) => updateDrag(_Drag.range, d.delta.dx),
+                  onHorizontalDragEnd: (_) => endDrag(),
+                  onHorizontalDragCancel: endDrag,
                   child: DecoratedBox(
                     decoration: const BoxDecoration(
                       border: Border(
@@ -128,25 +184,37 @@ class TrimRangeStrip extends StatelessWidget {
                 ),
               ),
               Positioned(
-                left: selLeftX - _handleWidth,
-                width: _handleWidth,
+                left: selLeftX - _hitWidth,
+                width: _hitWidth,
                 top: -3,
                 bottom: -3,
                 child: GestureDetector(
                   behavior: HitTestBehavior.opaque,
-                  onHorizontalDragUpdate: (d) => applyDelta('start', d.delta.dx),
-                  child: const _Handle(alignRight: true),
+                  onHorizontalDragStart: (_) => beginDrag(_Drag.start),
+                  onHorizontalDragUpdate: (d) => updateDrag(_Drag.start, d.delta.dx),
+                  onHorizontalDragEnd: (_) => endDrag(),
+                  onHorizontalDragCancel: endDrag,
+                  child: const Align(
+                    alignment: Alignment.centerRight,
+                    child: SizedBox(width: _handleWidth, child: _Handle(alignRight: true)),
+                  ),
                 ),
               ),
               Positioned(
                 left: selRightX,
-                width: _handleWidth,
+                width: _hitWidth,
                 top: -3,
                 bottom: -3,
                 child: GestureDetector(
                   behavior: HitTestBehavior.opaque,
-                  onHorizontalDragUpdate: (d) => applyDelta('end', d.delta.dx),
-                  child: const _Handle(alignRight: false),
+                  onHorizontalDragStart: (_) => beginDrag(_Drag.end),
+                  onHorizontalDragUpdate: (d) => updateDrag(_Drag.end, d.delta.dx),
+                  onHorizontalDragEnd: (_) => endDrag(),
+                  onHorizontalDragCancel: endDrag,
+                  child: const Align(
+                    alignment: Alignment.centerLeft,
+                    child: SizedBox(width: _handleWidth, child: _Handle(alignRight: false)),
+                  ),
                 ),
               ),
               Positioned(

@@ -69,6 +69,40 @@ class _VideoEditorScreenState extends State<VideoEditorScreen> {
     }
   }
 
+  bool _resumeAfterScrub = false;
+  bool _seeking = false;
+
+  void _scrubStart() {
+    _resumeAfterScrub = _controller.value.isPlaying;
+    _controller.pause();
+  }
+
+  Future<void> _scrub(Duration position) async {
+    // Drop intermediate positions while a seek is in flight so the preview
+    // keeps up with the finger instead of queueing stale seeks.
+    if (_seeking) {
+      _pendingSeek = position;
+      return;
+    }
+    _seeking = true;
+    var target = position;
+    do {
+      _pendingSeek = null;
+      await _controller.seekTo(target);
+      target = _pendingSeek ?? target;
+    } while (_pendingSeek != null && mounted);
+    _seeking = false;
+  }
+
+  Duration? _pendingSeek;
+
+  void _scrubEnd() {
+    final state = context.read<VideoClippingViewModel>().state;
+    _controller.seekTo(state.trimStart);
+    if (_resumeAfterScrub) _controller.play();
+    _resumeAfterScrub = false;
+  }
+
   void _handleBack(VideoClippingViewModel viewModel) {
     if (!viewModel.previousStep()) {
       Navigator.of(context).pop();
@@ -131,6 +165,9 @@ class _VideoEditorScreenState extends State<VideoEditorScreen> {
               state: state,
               viewModel: viewModel,
               onTogglePlay: _togglePlay,
+              onScrubStart: _scrubStart,
+              onScrub: _scrub,
+              onScrubEnd: _scrubEnd,
               onBack: () => _handleBack(viewModel),
               onNext: () => _handleNext(viewModel),
             ),
@@ -144,6 +181,9 @@ class _WizardBody extends StatelessWidget {
     required this.state,
     required this.viewModel,
     required this.onTogglePlay,
+    required this.onScrubStart,
+    required this.onScrub,
+    required this.onScrubEnd,
     required this.onBack,
     required this.onNext,
   });
@@ -152,6 +192,9 @@ class _WizardBody extends StatelessWidget {
   final VideoClippingState state;
   final VideoClippingViewModel viewModel;
   final VoidCallback onTogglePlay;
+  final VoidCallback onScrubStart;
+  final ValueChanged<Duration> onScrub;
+  final VoidCallback onScrubEnd;
   final VoidCallback onBack;
   final VoidCallback onNext;
 
@@ -227,6 +270,9 @@ class _WizardBody extends StatelessWidget {
                     state: state,
                     viewModel: viewModel,
                     onTogglePlay: onTogglePlay,
+                    onScrubStart: onScrubStart,
+                    onScrub: onScrub,
+                    onScrubEnd: onScrubEnd,
                   ),
                 ),
               ],
@@ -244,12 +290,18 @@ class _StepPanel extends StatelessWidget {
     required this.state,
     required this.viewModel,
     required this.onTogglePlay,
+    required this.onScrubStart,
+    required this.onScrub,
+    required this.onScrubEnd,
   });
 
   final VideoPlayerController controller;
   final VideoClippingState state;
   final VideoClippingViewModel viewModel;
   final VoidCallback onTogglePlay;
+  final VoidCallback onScrubStart;
+  final ValueChanged<Duration> onScrub;
+  final VoidCallback onScrubEnd;
 
   @override
   Widget build(BuildContext context) {
@@ -265,6 +317,9 @@ class _StepPanel extends StatelessWidget {
             isPlaying: value.isPlaying,
             onTogglePlay: onTogglePlay,
             onChanged: (range) => viewModel.setTrimRange(range.$1, range.$2),
+            onScrubStart: onScrubStart,
+            onScrub: onScrub,
+            onScrubEnd: onScrubEnd,
             errorMessage: viewModel.rangeValidationError,
           ),
         );

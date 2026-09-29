@@ -16,6 +16,9 @@ class TrimPanel extends StatelessWidget {
     required this.isPlaying,
     required this.onTogglePlay,
     required this.onChanged,
+    this.onScrubStart,
+    this.onScrub,
+    this.onScrubEnd,
     this.errorMessage,
   });
 
@@ -26,6 +29,9 @@ class TrimPanel extends StatelessWidget {
   final bool isPlaying;
   final VoidCallback onTogglePlay;
   final ValueChanged<(Duration, Duration)> onChanged;
+  final VoidCallback? onScrubStart;
+  final ValueChanged<Duration>? onScrub;
+  final VoidCallback? onScrubEnd;
   final String? errorMessage;
 
   @override
@@ -95,6 +101,9 @@ class TrimPanel extends StatelessWidget {
             end: end,
             playhead: playhead,
             onChanged: onChanged,
+            onScrubStart: onScrubStart,
+            onScrub: onScrub,
+            onScrubEnd: onScrubEnd,
           ),
         ),
         const SizedBox(height: AppSpacing.sm),
