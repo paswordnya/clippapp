@@ -1,0 +1,83 @@
+name: semarewards
+description: "Landscape video clipper: trim, reframe to 16:9, caption, export."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.13.4
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+
+  # State management (MVVM: ChangeNotifier ViewModels exposed via provider)
+  provider: ^6.1.5
+
+  # Video picking, preview and metadata
+  image_picker: ^1.2.3
+  video_player: ^2.14.0
+
+  # Video processing (trim, crop 9:16, burn-in caption)
+  # Using the LGPL-only "video" build: no GPL codecs (e.g. libx264), so it is
+  # safe to ship in a closed-source app. Needs freetype/fontconfig (only in
+  # the "video" and "full" flavors, not "min") for the drawtext filter that
+  # burns in the caption. See README for the full trade-off.
+  ffmpeg_kit_flutter_new_video: ^2.5.2
+
+  # Output handling
+  path_provider: ^2.1.6
+  gal: ^2.3.3
+  share_plus: ^13.3.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  mocktail: ^1.0.5
+  flutter_native_splash: ^2.4.8
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/fonts/
+    - assets/branding/
+
+  fonts:
+    - family: Instrument Sans
+      fonts:
+        - asset: assets/fonts/InstrumentSans-Regular.ttf
+        - asset: assets/fonts/InstrumentSans-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/InstrumentSans-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/InstrumentSans-Bold.ttf
+          weight: 700
+    - family: JetBrains Mono
+      fonts:
+        - asset: assets/fonts/JetBrainsMono-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/JetBrainsMono-SemiBold.ttf
+          weight: 600
+    # Caption-only display fonts (burned-in caption style choices).
+    - family: Instrument Serif
+      fonts:
+        - asset: assets/fonts/InstrumentSerif-Italic.ttf
+          style: italic
+    - family: Anton
+      fonts:
+        - asset: assets/fonts/Anton-Regular.ttf
+
+flutter_native_splash:
+  color: "0F0F0E"
+  image: assets/branding/splash_logo.png
+  # Android 12+'s native splash API always clips the "icon" into a circle
+  # (it's designed for square app icons, not a wide wordmark), so this
+  # wordmark image would render cropped/illegible there. Solid background
+  # only on Android 12+; the full wordmark still shows on iOS and on
+  # Android < 12, which don't have that constraint.
+  android_12:
+    color: "0F0F0E"

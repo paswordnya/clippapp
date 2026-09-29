@@ -1,0 +1,51 @@
+PODS:
+  - ffmpeg_kit_flutter_new_min (8.1.2):
+    - ffmpeg_kit_flutter_new_min/min (= 8.1.2)
+    - Flutter
+  - ffmpeg_kit_flutter_new_min/min (8.1.2):
+    - Flutter
+  - Flutter (1.0.0)
+  - gal (1.0.0):
+    - Flutter
+    - FlutterMacOS
+  - image_picker_ios (0.0.1):
+    - Flutter
+  - share_plus (0.0.1):
+    - Flutter
+  - video_player_avfoundation (0.0.1):
+    - Flutter
+    - FlutterMacOS
+
+DEPENDENCIES:
+  - ffmpeg_kit_flutter_new_min (from `.symlinks/plugins/ffmpeg_kit_flutter_new_min/ios`)
+  - Flutter (from `Flutter`)
+  - gal (from `.symlinks/plugins/gal/darwin`)
+  - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
+  - share_plus (from `.symlinks/plugins/share_plus/ios`)
+  - video_player_avfoundation (from `.symlinks/plugins/video_player_avfoundation/darwin`)
+
+EXTERNAL SOURCES:
+  ffmpeg_kit_flutter_new_min:
+    :path: ".symlinks/plugins/ffmpeg_kit_flutter_new_min/ios"
+  Flutter:
+    :path: Flutter
+  gal:
+    :path: ".symlinks/plugins/gal/darwin"
+  image_picker_ios:
+    :path: ".symlinks/plugins/image_picker_ios/ios"
+  share_plus:
+    :path: ".symlinks/plugins/share_plus/ios"
+  video_player_avfoundation:
+    :path: ".symlinks/plugins/video_player_avfoundation/darwin"
+
+SPEC CHECKSUMS:
+  ffmpeg_kit_flutter_new_min: 2d44c39c41f0c8e25681e17183f62724f3c4fc22
+  Flutter: 71a624a5bc0c04062bf19101d501e466baf2fb47
+  gal: baecd024ebfd13c441269ca7404792a7152fde89
+  image_picker_ios: e0ece4aa2a75771a7de3fa735d26d90817041326
+  share_plus: 50da8cb520a8f0f65671c6c6a99b3617ed10a58a
+  video_player_avfoundation: 3453f792138786248960ca029747fcd9f318ef52
+
+PODFILE CHECKSUM: 3ba3a73b1b12adcf321a227a745625fe0888cc82
+
+COCOAPODS: 1.16.2
