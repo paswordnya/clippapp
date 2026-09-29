@@ -24,7 +24,8 @@ install matching `environment.sdk: ^3.13.4` in `pubspec.yaml` should work.
 is 24 (Android 7.0+), handled automatically by Gradle. A physical device or
 emulator with a photo library is needed to pick and save videos.
 
-**iOS (also compatible)**: the app runs on iOS 15.0+ as well. Note that iOS
+**iOS (also compatible)**: the app is built with Flutter and targets iOS 15.0+,
+so it runs on iOS too (primary testing and the demo were done on Android). iOS
 builds can't be shared as a downloadable file like the APK. To try it, the
 device (or simulator) must be connected to your Mac and the app installed
 through Xcode/Flutter:
