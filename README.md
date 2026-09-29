@@ -3,16 +3,6 @@
 A landscape-video clipper: pick a video, trim it to at most 60 seconds, add a
 one-line caption, and export a clean 16:9 clip with the caption burned in.
 
-## Demo
-
-<p align="center">
-  <img src="docs/demo.gif" alt="Clipp App demo: pick, trim, caption, export" width="300">
-</p>
-
-Screen recording on an Android emulator: pick a video, drag the trim handles
-(the preview follows the handle), add a caption, export. Full-quality version:
-[`docs/demo.mp4`](docs/demo.mp4).
-
 ## Download & Install
 
 _APK link pending — will be added here once available._
@@ -125,7 +115,12 @@ rules, testing, and code were reviewed and validated manually.
 
 ## Demo Video
 
-_Demo video link pending — will be added here once available._
+<p align="center">
+  <img src="docs/demo.gif" alt="Clipp App demo: pick, trim, caption, export" width="300">
+</p>
+
+Screen recording on an Android emulator. Full-quality version:
+[`docs/demo.mp4`](docs/demo.mp4).
 
 The demo shows:
 
